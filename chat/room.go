@@ -1,5 +1,12 @@
 package main
 
+import (
+	"log"
+	"net/http"
+
+	"github.com/gorilla/websocket"
+)
+
 type room struct {
 	//forwordは他クライアントに転送するためのメッセージを保持するチャネルです。
 	forward chan []byte
@@ -34,6 +41,16 @@ func (r *room) run() {
 				}
 			}
 		}
+	}
+}
+
+//newRoomはすぐに利用できるチャットルームを生成して返します。
+func newRoom() *room {
+	return &room{
+		forward: make(chan []byte),
+		join:    make(chan *client),
+		leave:   make(chan *client),
+		clients: make(map[*client]bool),
 	}
 }
 
