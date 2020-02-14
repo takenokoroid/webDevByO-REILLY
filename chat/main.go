@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"html/template"
 	"log"
 	"net/http"
@@ -20,10 +21,13 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			template.Must(template.ParseFiles(filepath.Join("chat/templates", t.filename)))
 		//GOPATHからみてるのでそこからのパスを書く
 	})
-	t.templ.Execute(w, nil)
+	t.templ.Execute(w, r)
 }
 
 func main() {
+	var addr = flag.String("addr", ":8080", "アプリケーションのアドレス")
+	flag.Parse() //フラグを解釈します
+
 	//route
 	r := newRoom()
 	http.Handle("/room", r)
@@ -31,6 +35,7 @@ func main() {
 	//start chatroom
 	go r.run()
 	//WebServer Starting...
+	log.Println("Webサーバを開始します。ポート：", *addr)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
