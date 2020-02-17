@@ -5,11 +5,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 	"path/filepath"
 	"sync"
-
-	"../trace"
 )
 
 type templateHandler struct {
@@ -33,7 +30,7 @@ func main() {
 
 	//route
 	r := newRoom()
-	r.tracer = trace.New(os.Stdout)
+	//r.tracer = trace.New(os.Stdout)
 	http.Handle("/room", r)
 	http.Handle("/", &templateHandler{filename: "chat.html"})
 	//start chatroom
